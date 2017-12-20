@@ -1,0 +1,662 @@
+<html>
+	<head>
+		<meta charset="UTF-8"> 
+		<title>Un test</title>
+		<script src="CodeMirror/lib/codemirror.js"></script>
+		<link rel="stylesheet" href="CodeMirror/lib/codemirror.css">
+		<script src="scripts/file_commenter.js"></script>
+		<script src="scripts/mode_selector.js"></script>
+		<script type="text/javascript">
+			var file_commenters = null;
+
+			var mode = null;
+
+			function add_file_commenter(a_index){
+				var l_container = document.getElementById(
+						"div_file_viewer_content_" + a_index
+					)
+				var l_text_area = document.getElementById(
+						"ta_file_" + a_index
+					)
+				var l_mode_selector = document.getElementById(
+						"sl_mode_selector_" + a_index
+					)
+				file_commenters[a_index] = new file_commenter(
+						l_container, l_text_area, l_mode_selector
+						)
+			}
+
+			function set_file_commenter_mode(a_index, a_mode){
+				mode.load_mode(a_mode, function (a_mode) {
+					file_commenters[a_index].set_mode(a_mode) 
+				});
+			}
+
+			/**
+			 * Initialization of the page
+			 * When the page load, initialize `cm_fichiers` and `sl_fichiers`.
+			 * \param Array a_modes Every modes of the files
+			 */
+			function on_page_load(){
+				mode = new mode_selector();
+				file_commenters = new Array();
+				add_file_commenter(0);
+				add_file_commenter(1);
+				set_file_commenter_mode(1, "eiffel");
+			}
+
+			/**
+			 * Changing a file mode.
+			 * When the user use a mode selector to change the mode of a file.
+			 * \param int a_index The index of the file
+			 */
+			function on_mode_change(a_index){
+				var l_sl_mode_selector = document.getElementById("sl_mode_selector_" + a_index);
+				if (l_sl_mode_selector != null){
+					var l_value = l_sl_mode_selector.value;
+					
+
+
+					for(i = 0; i < l_cm_fichier.length; i = i + 1){
+						if (l_value === "plain") {
+							for (i = 0; i < l_cm_fichier.length; i = i + 1){
+								l_cm_fichier[i].setOption("mode", null);
+							}
+						} else {
+							if (loaded_modes[l_value]) {
+								for (i = 0; i < l_cm_fichier.length; i = i + 1){
+									l_cm_fichier[i].setOption("mode", l_value);
+								}
+							} else {
+								var scriptTag = document.createElement('script');
+								scriptTag.src = "CodeMirror/mode/" + l_value + "/" + l_value + ".js";
+								scriptTag.onload = (function(a_cm_fichier, a_value) { 
+									return function() { 
+										loaded_modes[a_value] = true;
+										for (i = 0; i < a_cm_fichier.length; i = i + 1){
+											a_cm_fichier[i].setOption("mode", a_value); 
+										}
+									};
+								})(l_cm_fichier, l_value);
+								scriptTag.onreadystatechange = function() { l_cm_fichier.setOption("mode", l_sl_mode_selector.value); };
+								document.head.appendChild(scriptTag);
+							}
+						}
+					}
+				}
+			}
+		</script>
+		<style>
+			.CodeMirror-scroll {
+				height: auto;
+				overflow-y: hidden;
+				overflow-x: auto;
+			}
+			.CodeMirror {
+				border: 1px solid #eee;
+				height: auto;
+			}
+			div.file_viewer {
+				border-radius: 25px;
+				padding: 5px;
+				margin: 10px 10px 20px 10px;
+				background-color: lightblue;
+			}
+			div.file_viewer_content {
+				margin: 0px 10px 20px 10px;
+			}
+		</style>
+	</head>
+	<body onload="on_page_load()">
+		<div class="file_viewer">
+			<div class="file_viewer_content" id="div_file_viewer_content_0">
+				<p class="file_viewer_header">Fichier1<span style="float:right;">Mode:<select id="sl_mode_selector_0" onchange="on_mode_change(0)">
+				   <option value="plain" selected>Aucun</option>
+					<option value="apl">Apl</option>
+					<option value="asciiarmor">Asciiarmor</option>
+					<option value="asn.1">Asn.1</option>
+					<option value="asterisk">Asterisk</option>
+					<option value="brainfuck">Brainfuck</option>
+					<option value="clike">Clike</option>
+					<option value="clojure">Clojure</option>
+					<option value="cmake">Cmake</option>
+					<option value="cobol">Cobol</option>
+					<option value="coffeescript">CoffeeScript</option>
+					<option value="commonlisp">CommonLisp</option>
+					<option value="crystal">Crystal</option>
+					<option value="css">Css</option>
+					<option value="cypher">Cypher</option>
+					<option value="d">D</option>
+					<option value="dart">Dart</option>
+					<option value="diff">Diff</option>
+					<option value="django">Django</option>
+					<option value="dockerfile">Dockerfile</option>
+					<option value="dtd">Dtd</option>
+					<option value="dylan">Dylan</option>
+					<option value="ebnf">Ebnf</option>
+					<option value="ecl">Ecl</option>
+					<option value="eiffel">Eiffel</option>
+					<option value="elm">Elm</option>
+					<option value="erlang">Erlang</option>
+					<option value="factor">Factor</option>
+					<option value="fcl">Fcl</option>
+					<option value="forth">Forth</option>
+					<option value="fortran">Fortran</option>
+					<option value="gas">Gas</option>
+					<option value="gfm">Gfm</option>
+					<option value="gherkin">Gherkin</option>
+					<option value="go">Go</option>
+					<option value="groovy">Groovy</option>
+					<option value="haml">Haml</option>
+					<option value="handlebars">Handlebars</option>
+					<option value="haskell">Haskell</option>
+					<option value="haskell-literate">Haskell literate</option>
+					<option value="haxe">Haxe</option>
+					<option value="htmlembedded">Html Embedded</option>
+					<option value="htmlmixed">Html Mixed</option>
+					<option value="http">Http</option>
+					<option value="idl">Idl</option>
+					<option value="javascript">Javascript</option>
+					<option value="jinja2">Jinja2</option>
+					<option value="jsx">Jsx</option>
+					<option value="julia">Julia</option>
+					<option value="livescript">Livescript</option>
+					<option value="lua">Lua</option>
+					<option value="markdown">Markdown</option>
+					<option value="mathematica">Mathematica</option>
+					<option value="mbox">Mbox</option>
+					<option value="mirc">Mirc</option>
+					<option value="mllike">Mllike</option>
+					<option value="modelica">Modelica</option>
+					<option value="mscgen">Mscgen</option>
+					<option value="mumps">Mumps</option>
+					<option value="nginx">Nginx</option>
+					<option value="nsis">Nsis</option>
+					<option value="ntriples">Ntriples</option>
+					<option value="octave">Octave</option>
+					<option value="oz">Oz</option>
+					<option value="pascal">Pascal</option>
+					<option value="pegjs">Pegjs</option>
+					<option value="perl">Perl</option>
+					<option value="php">Php</option>
+					<option value="pig">Pig</option>
+					<option value="powershell">PowerShell</option>
+					<option value="properties">Properties</option>
+					<option value="protobuf">Protobuf</option>
+					<option value="pug">Pug</option>
+					<option value="puppet">Puppet</option>
+					<option value="python">Python</option>
+					<option value="q">Q</option>
+					<option value="r">R</option>
+					<option value="rpm">Rpm</option>
+					<option value="rst">Rst</option>
+					<option value="ruby">Ruby</option>
+					<option value="rust">Rust</option>
+					<option value="sas">Sas</option>
+					<option value="sass">Sass</option>
+					<option value="scheme">Scheme</option>
+					<option value="shell">Shell</option>
+					<option value="sieve">Sieve</option>
+					<option value="slim">Slim</option>
+					<option value="smalltalk">SmallTalk</option>
+					<option value="smarty">Smarty</option>
+					<option value="solr">Solr</option>
+					<option value="soy">Soy</option>
+					<option value="sparql">Sparql</option>
+					<option value="spreadsheet">Spreadsheet</option>
+					<option value="sql">Sql</option>
+					<option value="stex">Stex</option>
+					<option value="stylus">Stylus</option>
+					<option value="swift">Swift</option>
+					<option value="tcl">Tcl</option>
+					<option value="textile">Textile</option>
+					<option value="tiddlywiki">Tiddlywiki</option>
+					<option value="tiki">Tiki</option>
+					<option value="toml">Toml</option>
+					<option value="tornado">Tornado</option>
+					<option value="troff">Troff</option>
+					<option value="ttcn">Ttcn</option>
+					<option value="ttcn-cfg">Ttcn-cfg</option>
+					<option value="turtle">Turtle</option>
+					<option value="twig">Twig</option>
+					<option value="vb">VB</option>
+					<option value="vbscript">VBscript</option>
+					<option value="velocity">Velocity</option>
+					<option value="verilog">Verilog</option>
+					<option value="vhdl">Vhdl</option>
+					<option value="vue">Vue</option>
+					<option value="webidl">Webidl</option>
+					<option value="xml">Xml</option>
+					<option value="xquery">Xquery</option>
+					<option value="yacas">Yacas</option>
+					<option value="yaml">Yaml</option>
+					<option value="yaml-frontmatter">Yaml Frontmatter</option>
+					<option value="z80">Z80</option>
+					</select><span></p>
+				<textarea readonly name="ta_files" id="ta_file_0">
+note
+	description: "[
+				Representing a device.
+				The devices types are also known as 'backends' within cairo
+			]"
+	author: "Louis Marchand"
+	date: "Wed, 29 Mar 2017 02:01:53 +0000"
+	revision: "0.1"
+
+class
+	CAIRO_DEVICE
+
+inherit
+	CAIRO_INTERNAL_MEMORY_POINTER
+		redefine
+			make
+		end
+	CAIRO_DEVICE_ERROR
+		undefine
+			is_equal
+		end
+	DISPOSABLE
+		undefine
+			is_equal
+		end
+
+create {CAIRO_ANY}
+	make
+
+feature {NONE} -- Initialization
+
+	make(a_item:POINTER)
+			-- Initialization of `Current' using `a_item' as `item'
+		do
+			item := {CAIRO_EXTERNALS}.cairo_device_reference(a_item)
+			type_index := {CAIRO_EXTERNALS}.CAIRO_DEVICE_TYPE_INVALID
+			error_code := {CAIRO_EXTERNALS}.cairo_device_status(item)
+			is_valid := is_success
+			if is_success then
+				type_index := {CAIRO_EXTERNALS}.cairo_device_get_type(item)
+			end
+		end
+
+feature -- Access
+
+	flush
+			-- Finish any pending operations on `Current' and also restore
+			-- any temporary modifications cairo has made to `Current''s state.
+			-- This feature may `acquire' `Current'.
+		require
+			Is_valid: not is_type_valid
+		do
+			{CAIRO_EXTERNALS}.cairo_device_flush(item)
+			error_code := {CAIRO_EXTERNALS}.cairo_device_status(item)
+		end
+
+	aquire
+			-- Acquires `Current' for the current thread.
+			-- After `Current' is aquired, a matching call to `release' is required.
+			-- This feature will block until no other thread has acquired `Current'.
+			-- You must never acquire two different devices at the same time unless this
+			-- is explicitly allowed. Otherwise the possibility of deadlocks exist.
+			-- As various features can acquire {CAIRO_DEVICE} when called, these features
+			-- may also cause deadlocks when you call them with an acquired {CAIRO_DEVICE}.
+			-- So you must not have a {CAIRO_DEVICE} acquired when calling them. These features
+			-- are marked in the documentation.
+		do
+			error_code := {CAIRO_EXTERNALS}.cairo_device_acquire(item)
+		end
+
+	release
+			-- Release `Current' that has been previously `aquire'd
+		do
+			{CAIRO_EXTERNALS}.cairo_device_release(item)
+		end
+
+feature -- Status report
+
+	is_type_drm:BOOLEAN
+			-- Is `Current' of type 'Direct Render Manager' (DRM)
+		do
+			Result := type_index = {CAIRO_EXTERNALS}.CAIRO_DEVICE_TYPE_DRM
+		end
+
+	is_type_opengl:BOOLEAN
+			-- Is `Current' of type OpenGL
+		do
+			Result := type_index = {CAIRO_EXTERNALS}.CAIRO_DEVICE_TYPE_GL
+		end
+
+	is_type_script:BOOLEAN
+			-- Is `Current' of type script (usefull to batch a drawing sequence)
+		do
+			Result := type_index = {CAIRO_EXTERNALS}.CAIRO_DEVICE_TYPE_GL
+		end
+
+	is_type_xcb:BOOLEAN
+			-- Is `Current' of type 'X protocol C-language Binding' (XCB)
+		do
+			Result := type_index = {CAIRO_EXTERNALS}.CAIRO_DEVICE_TYPE_XCB
+		end
+
+	is_type_xlib:BOOLEAN
+			-- Is `Current' of type X library
+		do
+			Result := type_index = {CAIRO_EXTERNALS}.CAIRO_DEVICE_TYPE_XLIB
+		end
+
+	is_type_xml:BOOLEAN
+			-- Is `Current' of type X library
+		do
+			Result := type_index = {CAIRO_EXTERNALS}.CAIRO_DEVICE_TYPE_XML
+		end
+
+	is_type_cogl:BOOLEAN
+			-- Is `Current' of type X library
+		do
+			Result := type_index = {CAIRO_EXTERNALS}.CAIRO_DEVICE_TYPE_COGL
+		end
+
+	is_type_win32:BOOLEAN
+			-- Is `Current' of type Microsoft Windows
+		do
+			Result := type_index = {CAIRO_EXTERNALS}.CAIRO_DEVICE_TYPE_WIN32
+		end
+
+	is_type_valid:BOOLEAN
+			-- Is `Current' valid
+		do
+			Result := type_index /= {CAIRO_EXTERNALS}.CAIRO_DEVICE_TYPE_INVALID
+		end
+
+feature {CAIRO_ANY} -- Implementation
+
+	type_index:INTEGER
+			-- The type of `Current'
+
+feature{NONE} -- Implementation
+
+	dispose
+			-- <Precursor>
+		do
+			{CAIRO_EXTERNALS}.cairo_device_destroy(item)
+		end
+
+end
+				</textarea>
+			</div>
+		</div>
+		<div class="file_viewer">
+			<div class="file_viewer_content" id="div_file_viewer_content_1">
+				<p class="file_viewer_header">Fichier1<span style="float:right;">Mode:<select id="sl_mode_selector_1" onchange="on_mode_change(1)">
+				   <option value="plain">Aucun</option>
+					<option value="apl">Apl</option>
+					<option value="asciiarmor">Asciiarmor</option>
+					<option value="asn.1">Asn.1</option>
+					<option value="asterisk">Asterisk</option>
+					<option value="brainfuck">Brainfuck</option>
+					<option value="clike">Clike</option>
+					<option value="clojure">Clojure</option>
+					<option value="cmake">Cmake</option>
+					<option value="cobol">Cobol</option>
+					<option value="coffeescript">CoffeeScript</option>
+					<option value="commonlisp">CommonLisp</option>
+					<option value="crystal">Crystal</option>
+					<option value="css">Css</option>
+					<option value="cypher">Cypher</option>
+					<option value="d">D</option>
+					<option value="dart">Dart</option>
+					<option value="diff">Diff</option>
+					<option value="django">Django</option>
+					<option value="dockerfile">Dockerfile</option>
+					<option value="dtd">Dtd</option>
+					<option value="dylan">Dylan</option>
+					<option value="ebnf">Ebnf</option>
+					<option value="ecl">Ecl</option>
+					<option value="eiffel">Eiffel</option>
+					<option value="elm">Elm</option>
+					<option value="erlang">Erlang</option>
+					<option value="factor">Factor</option>
+					<option value="fcl">Fcl</option>
+					<option value="forth">Forth</option>
+					<option value="fortran">Fortran</option>
+					<option value="gas">Gas</option>
+					<option value="gfm">Gfm</option>
+					<option value="gherkin">Gherkin</option>
+					<option value="go">Go</option>
+					<option value="groovy">Groovy</option>
+					<option value="haml">Haml</option>
+					<option value="handlebars">Handlebars</option>
+					<option value="haskell">Haskell</option>
+					<option value="haskell-literate">Haskell literate</option>
+					<option value="haxe">Haxe</option>
+					<option value="htmlembedded">Html Embedded</option>
+					<option value="htmlmixed">Html Mixed</option>
+					<option value="http">Http</option>
+					<option value="idl">Idl</option>
+					<option value="javascript">Javascript</option>
+					<option value="jinja2">Jinja2</option>
+					<option value="jsx">Jsx</option>
+					<option value="julia">Julia</option>
+					<option value="livescript">Livescript</option>
+					<option value="lua">Lua</option>
+					<option value="markdown">Markdown</option>
+					<option value="mathematica">Mathematica</option>
+					<option value="mbox">Mbox</option>
+					<option value="mirc">Mirc</option>
+					<option value="mllike">Mllike</option>
+					<option value="modelica">Modelica</option>
+					<option value="mscgen">Mscgen</option>
+					<option value="mumps">Mumps</option>
+					<option value="nginx">Nginx</option>
+					<option value="nsis">Nsis</option>
+					<option value="ntriples">Ntriples</option>
+					<option value="octave">Octave</option>
+					<option value="oz">Oz</option>
+					<option value="pascal">Pascal</option>
+					<option value="pegjs">Pegjs</option>
+					<option value="perl">Perl</option>
+					<option value="php">Php</option>
+					<option value="pig">Pig</option>
+					<option value="powershell">PowerShell</option>
+					<option value="properties">Properties</option>
+					<option value="protobuf">Protobuf</option>
+					<option value="pug">Pug</option>
+					<option value="puppet">Puppet</option>
+					<option value="python">Python</option>
+					<option value="q">Q</option>
+					<option value="r">R</option>
+					<option value="rpm">Rpm</option>
+					<option value="rst">Rst</option>
+					<option value="ruby">Ruby</option>
+					<option value="rust">Rust</option>
+					<option value="sas">Sas</option>
+					<option value="sass">Sass</option>
+					<option value="scheme">Scheme</option>
+					<option value="shell">Shell</option>
+					<option value="sieve">Sieve</option>
+					<option value="slim">Slim</option>
+					<option value="smalltalk">SmallTalk</option>
+					<option value="smarty">Smarty</option>
+					<option value="solr">Solr</option>
+					<option value="soy">Soy</option>
+					<option value="sparql">Sparql</option>
+					<option value="spreadsheet">Spreadsheet</option>
+					<option value="sql">Sql</option>
+					<option value="stex">Stex</option>
+					<option value="stylus">Stylus</option>
+					<option value="swift">Swift</option>
+					<option value="tcl">Tcl</option>
+					<option value="textile">Textile</option>
+					<option value="tiddlywiki">Tiddlywiki</option>
+					<option value="tiki">Tiki</option>
+					<option value="toml">Toml</option>
+					<option value="tornado">Tornado</option>
+					<option value="troff">Troff</option>
+					<option value="ttcn">Ttcn</option>
+					<option value="ttcn-cfg">Ttcn-cfg</option>
+					<option value="turtle">Turtle</option>
+					<option value="twig">Twig</option>
+					<option value="vb">VB</option>
+					<option value="vbscript">VBscript</option>
+					<option value="velocity">Velocity</option>
+					<option value="verilog">Verilog</option>
+					<option value="vhdl">Vhdl</option>
+					<option value="vue">Vue</option>
+					<option value="webidl">Webidl</option>
+					<option value="xml">Xml</option>
+					<option value="xquery">Xquery</option>
+					<option value="yacas">Yacas</option>
+					<option value="yaml">Yaml</option>
+					<option value="yaml-frontmatter">Yaml Frontmatter</option>
+					<option value="z80">Z80</option>
+					</select><span></p>
+				<textarea readonly name="ta_files" id="ta_file_1">
+note
+	description: "[
+				Representing a device.
+				The devices types are also known as 'backends' within cairo
+			]"
+	author: "Louis Marchand"
+	date: "Wed, 29 Mar 2017 02:01:53 +0000"
+	revision: "0.1"
+
+class
+	CAIRO_DEVICE
+
+inherit
+	CAIRO_INTERNAL_MEMORY_POINTER
+		redefine
+			make
+		end
+	CAIRO_DEVICE_ERROR
+		undefine
+			is_equal
+		end
+	DISPOSABLE
+		undefine
+			is_equal
+		end
+
+create {CAIRO_ANY}
+	make
+
+feature {NONE} -- Initialization
+
+	make(a_item:POINTER)
+			-- Initialization of `Current' using `a_item' as `item'
+		do
+			item := {CAIRO_EXTERNALS}.cairo_device_reference(a_item)
+			type_index := {CAIRO_EXTERNALS}.CAIRO_DEVICE_TYPE_INVALID
+			error_code := {CAIRO_EXTERNALS}.cairo_device_status(item)
+			is_valid := is_success
+			if is_success then
+				type_index := {CAIRO_EXTERNALS}.cairo_device_get_type(item)
+			end
+		end
+
+feature -- Access
+
+	flush
+			-- Finish any pending operations on `Current' and also restore
+			-- any temporary modifications cairo has made to `Current''s state.
+			-- This feature may `acquire' `Current'.
+		require
+			Is_valid: not is_type_valid
+		do
+			{CAIRO_EXTERNALS}.cairo_device_flush(item)
+			error_code := {CAIRO_EXTERNALS}.cairo_device_status(item)
+		end
+
+	aquire
+			-- Acquires `Current' for the current thread.
+			-- After `Current' is aquired, a matching call to `release' is required.
+			-- This feature will block until no other thread has acquired `Current'.
+			-- You must never acquire two different devices at the same time unless this
+			-- is explicitly allowed. Otherwise the possibility of deadlocks exist.
+			-- As various features can acquire {CAIRO_DEVICE} when called, these features
+			-- may also cause deadlocks when you call them with an acquired {CAIRO_DEVICE}.
+			-- So you must not have a {CAIRO_DEVICE} acquired when calling them. These features
+			-- are marked in the documentation.
+		do
+			error_code := {CAIRO_EXTERNALS}.cairo_device_acquire(item)
+		end
+
+	release
+			-- Release `Current' that has been previously `aquire'd
+		do
+			{CAIRO_EXTERNALS}.cairo_device_release(item)
+		end
+
+feature -- Status report
+
+	is_type_drm:BOOLEAN
+			-- Is `Current' of type 'Direct Render Manager' (DRM)
+		do
+			Result := type_index = {CAIRO_EXTERNALS}.CAIRO_DEVICE_TYPE_DRM
+		end
+
+	is_type_opengl:BOOLEAN
+			-- Is `Current' of type OpenGL
+		do
+			Result := type_index = {CAIRO_EXTERNALS}.CAIRO_DEVICE_TYPE_GL
+		end
+
+	is_type_script:BOOLEAN
+			-- Is `Current' of type script (usefull to batch a drawing sequence)
+		do
+			Result := type_index = {CAIRO_EXTERNALS}.CAIRO_DEVICE_TYPE_GL
+		end
+
+	is_type_xcb:BOOLEAN
+			-- Is `Current' of type 'X protocol C-language Binding' (XCB)
+		do
+			Result := type_index = {CAIRO_EXTERNALS}.CAIRO_DEVICE_TYPE_XCB
+		end
+
+	is_type_xlib:BOOLEAN
+			-- Is `Current' of type X library
+		do
+			Result := type_index = {CAIRO_EXTERNALS}.CAIRO_DEVICE_TYPE_XLIB
+		end
+
+	is_type_xml:BOOLEAN
+			-- Is `Current' of type X library
+		do
+			Result := type_index = {CAIRO_EXTERNALS}.CAIRO_DEVICE_TYPE_XML
+		end
+
+	is_type_cogl:BOOLEAN
+			-- Is `Current' of type X library
+		do
+			Result := type_index = {CAIRO_EXTERNALS}.CAIRO_DEVICE_TYPE_COGL
+		end
+
+	is_type_win32:BOOLEAN
+			-- Is `Current' of type Microsoft Windows
+		do
+			Result := type_index = {CAIRO_EXTERNALS}.CAIRO_DEVICE_TYPE_WIN32
+		end
+
+	is_type_valid:BOOLEAN
+			-- Is `Current' valid
+		do
+			Result := type_index /= {CAIRO_EXTERNALS}.CAIRO_DEVICE_TYPE_INVALID
+		end
+
+feature {CAIRO_ANY} -- Implementation
+
+	type_index:INTEGER
+			-- The type of `Current'
+
+feature{NONE} -- Implementation
+
+	dispose
+			-- <Precursor>
+		do
+			{CAIRO_EXTERNALS}.cairo_device_destroy(item)
+		end
+
+end
+				</textarea>
+			</div>
+		</div>
+	</body>
+</html>
